@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: tricolore-step
+    runtime: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    autoDeploy: true
