@@ -19,7 +19,7 @@ class AudioController {
         const randomTrack = this.playlist[Math.floor(Math.random() * this.playlist.length)];
         this.music = new Audio(`/assets/audio/music/${randomTrack}`);
         this.music.loop = true;
-        this.music.volume = 0.14; // Lower music for clearer cues
+        this.music.volume = 0.12; // Slightly lower music volume
         console.log(`Loaded music: ${randomTrack}`);
 
         // Color Cues (Capitalized as found in directory)
