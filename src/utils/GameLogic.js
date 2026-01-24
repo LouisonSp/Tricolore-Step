@@ -25,20 +25,26 @@ export function getRandomDuration(color) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export function getRandomStep() {
-  const index = Math.floor(Math.random() * STEPS.length);
-  return STEPS[index];
+export function getRandomStep(allowedSteps = STEPS) {
+  if (!allowedSteps || allowedSteps.length === 0) return null;
+  const index = Math.floor(Math.random() * allowedSteps.length);
+  return allowedSteps[index];
 }
 
-export function getNextState(currentColor) {
-  const colors = Object.values(COLORS).filter(c => c !== currentColor);
-  const nextColor = colors[Math.floor(Math.random() * colors.length)];
+export function getNextState(currentColor, allowedColors = Object.values(COLORS), allowedSteps = STEPS) {
+  const fallbackColors = Object.values(COLORS);
+  const safeColors = allowedColors && allowedColors.length > 0 ? allowedColors : fallbackColors;
+
+  const availableColors = safeColors.length === 1
+    ? safeColors
+    : safeColors.filter(c => c !== currentColor);
+  const nextColor = availableColors[Math.floor(Math.random() * availableColors.length)];
 
   const duration = getRandomDuration(nextColor);
   let step = null;
 
   if (nextColor === COLORS.ORANGE) {
-    step = getRandomStep();
+    step = getRandomStep(allowedSteps);
   }
 
   return {

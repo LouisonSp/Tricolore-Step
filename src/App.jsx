@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import TrafficLight from './components/TrafficLight';
 import { audioController } from './utils/AudioController';
-import { getNextState, COLORS, getRandomDuration } from './utils/GameLogic';
+import { getNextState, COLORS, STEPS, getRandomDuration } from './utils/GameLogic';
 import './App.css';
 
 const GAME_DURATION = 5 * 60; // 5 minutes in seconds
@@ -12,6 +12,8 @@ function App() {
 
   const [currentPhase, setCurrentPhase] = useState(null);
   const [phaseTimeLeft, setPhaseTimeLeft] = useState(0);
+  const [selectedColors, setSelectedColors] = useState(Object.values(COLORS));
+  const [selectedSteps, setSelectedSteps] = useState([...STEPS]);
 
   const timerRef = useRef(null);
   const stepCueTimeoutRef = useRef(null);
@@ -32,8 +34,14 @@ function App() {
     audioController.playMusic();
   };
 
+  const toggleSelection = (value, setFn) => {
+    setFn(prev => (
+      prev.includes(value) ? prev.filter(item => item !== value) : [...prev, value]
+    ));
+  };
+
   const transitionToNextPhase = (current) => {
-    const next = getNextState(current ? current.color : null);
+    const next = getNextState(current ? current.color : null, selectedColors, selectedSteps);
     setCurrentPhase(next);
     setPhaseTimeLeft(next.duration);
 
@@ -113,7 +121,60 @@ function App() {
       {gameState === 'idle' && (
         <div className="start-screen">
           <h1>Feu Tricolore Step</h1>
-          <button onClick={startGame} className="btn-start">COMMENCER (5 MIN)</button>
+          <button
+            onClick={startGame}
+            className="btn-start"
+            disabled={selectedColors.length === 0}
+            style={selectedColors.length === 0 ? { opacity: 0.6, cursor: 'not-allowed' } : undefined}
+          >
+            COMMENCER (5 MIN)
+          </button>
+
+          <div style={{ marginTop: '2rem', width: 'min(800px, 90%)', display: 'flex', gap: '2rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+            <div style={{ minWidth: '220px' }}>
+              <p style={{ marginBottom: '0.5rem', opacity: 0.8 }}>Couleurs actives</p>
+              {[
+                { value: COLORS.RED, label: 'Rouge' },
+                { value: COLORS.ORANGE, label: 'Orange' },
+                { value: COLORS.GREEN, label: 'Vert' }
+              ].map(option => (
+                <label key={option.value} style={{ display: 'block', marginBottom: '0.4rem' }}>
+                  <input
+                    type="checkbox"
+                    checked={selectedColors.includes(option.value)}
+                    onChange={() => toggleSelection(option.value, setSelectedColors)}
+                    style={{ marginRight: '0.5rem' }}
+                  />
+                  {option.label}
+                </label>
+              ))}
+              {selectedColors.length === 0 && (
+                <p style={{ marginTop: '0.5rem', fontSize: '0.85rem', opacity: 0.7 }}>
+                  Choisis au moins une couleur pour lancer.
+                </p>
+              )}
+            </div>
+
+            <div style={{ minWidth: '220px' }}>
+              <p style={{ marginBottom: '0.5rem', opacity: 0.8 }}>Pas (orange)</p>
+              {STEPS.map(step => (
+                <label key={step} style={{ display: 'block', marginBottom: '0.4rem' }}>
+                  <input
+                    type="checkbox"
+                    checked={selectedSteps.includes(step)}
+                    onChange={() => toggleSelection(step, setSelectedSteps)}
+                    style={{ marginRight: '0.5rem' }}
+                  />
+                  {step}
+                </label>
+              ))}
+              {selectedSteps.length === 0 && (
+                <p style={{ marginTop: '0.5rem', fontSize: '0.85rem', opacity: 0.7 }}>
+                  Aucun pas sélectionné, l'orange restera sans pas.
+                </p>
+              )}
+            </div>
+          </div>
 
           <div style={{ marginTop: '2rem', display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'center' }}>
             <p style={{ width: '100%', textAlign: 'center', opacity: 0.7 }}>Test Audio :</p>
