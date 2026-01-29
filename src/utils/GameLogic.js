@@ -1,7 +1,8 @@
 export const COLORS = {
   RED: 'red',
   ORANGE: 'orange',
-  GREEN: 'green'
+  GREEN: 'green',
+  WHITE: 'white'
 };
 
 export const STEPS = [
@@ -17,7 +18,8 @@ export const STEPS = [
 export const DURATIONS = {
   [COLORS.RED]: { min: 5, max: 15 },
   [COLORS.GREEN]: { min: 5, max: 35 },
-  [COLORS.ORANGE]: { min: 5, max: 17 }
+  [COLORS.ORANGE]: { min: 5, max: 17 },
+  [COLORS.WHITE]: { min: 5, max: 20 }
 };
 
 export function getRandomDuration(color) {
@@ -38,12 +40,15 @@ export function getNextState(currentColor, allowedColors = Object.values(COLORS)
   const availableColors = safeColors.length === 1
     ? safeColors
     : safeColors.filter(c => c !== currentColor);
-  const nextColor = availableColors[Math.floor(Math.random() * availableColors.length)];
+  const shouldForceWhite = safeColors.includes(COLORS.WHITE) && Math.random() < (1 / 3);
+  const nextColor = shouldForceWhite && currentColor !== COLORS.WHITE
+    ? COLORS.WHITE
+    : availableColors[Math.floor(Math.random() * availableColors.length)];
 
   const duration = getRandomDuration(nextColor);
   let step = null;
 
-  if (nextColor === COLORS.ORANGE) {
+  if (nextColor === COLORS.ORANGE || nextColor === COLORS.WHITE) {
     step = getRandomStep(allowedSteps);
   }
 

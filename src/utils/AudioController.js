@@ -26,6 +26,7 @@ class AudioController {
         this.cues['red'] = new Audio('/assets/audio/colors/Red.mp3');
         this.cues['green'] = new Audio('/assets/audio/colors/Green.mp3');
         this.cues['orange'] = new Audio('/assets/audio/colors/Orange.mp3');
+        this.cues['white'] = new Audio('/assets/audio/colors/Blanc.mp3');
 
         // Step Cues
         // Mapping keys (from GameLogic STEPS) to filenames
@@ -74,6 +75,10 @@ class AudioController {
                 audio.currentTime = 0;
             }
         });
+    }
+
+    hasCue(name) {
+        return Boolean(this.cues[name]);
     }
 
     playCue(name) {

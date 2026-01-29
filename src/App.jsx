@@ -46,8 +46,10 @@ function App() {
     setPhaseTimeLeft(next.duration);
 
     // Play audio cues
-    audioController.playCue(next.color);
-    if (next.color === COLORS.ORANGE && next.step) {
+    if (audioController.hasCue(next.color)) {
+      audioController.playCue(next.color);
+    }
+    if ((next.color === COLORS.ORANGE || next.color === COLORS.WHITE) && next.step) {
       // Play step cue after a short delay or mix? 
       // We'll play step cue immediately after color cue or with slight delay.
       if (stepCueTimeoutRef.current) {
@@ -136,7 +138,8 @@ function App() {
               {[
                 { value: COLORS.RED, label: 'Rouge' },
                 { value: COLORS.ORANGE, label: 'Orange' },
-                { value: COLORS.GREEN, label: 'Vert' }
+                { value: COLORS.GREEN, label: 'Vert' },
+                { value: COLORS.WHITE, label: 'Blanc' }
               ].map(option => (
                 <label key={option.value} style={{ display: 'block', marginBottom: '0.4rem' }}>
                   <input
@@ -181,6 +184,7 @@ function App() {
             <button onClick={() => audioController.testSound('red')} className="btn-control" style={{ fontSize: '0.8rem' }}>Rouge</button>
             <button onClick={() => audioController.testSound('green')} className="btn-control" style={{ fontSize: '0.8rem' }}>Vert</button>
             <button onClick={() => audioController.testSound('orange')} className="btn-control" style={{ fontSize: '0.8rem' }}>Orange</button>
+            <button onClick={() => audioController.testSound('white')} className="btn-control" style={{ fontSize: '0.8rem' }}>Blanc</button>
             <button onClick={() => audioController.testSound('BASIC')} className="btn-control" style={{ fontSize: '0.8rem' }}>Pas 1</button>
           </div>
         </div>
